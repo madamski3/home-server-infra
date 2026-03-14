@@ -6,11 +6,13 @@ Personal home server used for self-hosted infrastructure, personal projects, and
 ## Access
 - SSH: `mike@100.94.165.38` (Tailscale IP, key-only auth)
 - OS user: `mike`
+- GitHub: https://github.com/madamski3/home-server-infra.git
+- Local repo: `/home/mike/infra/`
 
 ## Architecture
 All services follow the same pattern:
 ```
-/home/mike/<service>/
+/home/mike/infra/<service>/
   docker-compose.yml
   data/               # persistent volume (mounted into container)
   .env                # secrets, not committed to git (symlink to ../.env if no secrets needed)
@@ -22,8 +24,8 @@ All services are joined to a shared external Docker network called `server-netwo
 
 | Service             | Directory                   | Ports         | Notes                          |
 |---------------------|-----------------------------|---------------|--------------------------------|
-| nginx-proxy-manager | `/home/mike/nginx-proxy-manager/` | 80, 81 (admin), 443 | Reverse proxy + SSL. Port 81 is the admin UI. |
-| postgres            | `/home/mike/postgres/`      | 5432          | No apps connected yet. Data at `./data/`. |
+| nginx-proxy-manager | `/home/mike/infra/nginx-proxy-manager/` | 80, 81 (admin), 443 | Reverse proxy + SSL. Port 81 is the admin UI. |
+| postgres            | `/home/mike/infra/postgres/`      | 5432          | No apps connected yet. Data at `./data/`. |
 | pgadmin             | (in postgres compose)       | 5050          | Postgres web UI                |
 | uptime-kuma         | `/home/mike/uptime-kuma/`   | 3001          | Uptime monitoring              |
 
@@ -35,15 +37,15 @@ All services are joined to a shared external Docker network called `server-netwo
 - Future plan: point a domain at this server and use nginx-proxy-manager to route traffic + manage SSL.
 
 ## Conventions
-- New apps get their own directory under `/home/mike/` with a `docker-compose.yml`.
-- Secrets go in per-service `.env` files (never committed). Shared non-secret vars (e.g. `TAILSCALE_IP`) live in `/home/mike/.env`.
+- New services get their own directory under `/home/mike/infra/` with a `docker-compose.yml`.
+- Secrets go in per-service `.env` files (never committed). Shared non-secret vars (e.g. `TAILSCALE_IP`) live in `/home/mike/infra/.env`.
+- New app repos (portfolio, personal tools, etc.) live as siblings at `/home/mike/<app-name>/`, each with their own git repo.
 - All new services must join `server-network` to participate in inter-service communication.
 - Admin/internal ports should be bound to `${TAILSCALE_IP}`, not `0.0.0.0`.
 - Postgres will be the standard database for new apps.
 
 ## Near-Term Priorities
-1. Get all existing config/docker-compose files into git/GitHub (no sensitive `.env` files).
-2. Connect Postgres to the first app.
+1. Connect Postgres to the first app.
 
 ## Risk Posture
 - Downtime of an hour or two is acceptable.
