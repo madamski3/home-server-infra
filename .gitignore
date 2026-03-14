@@ -1,5 +1,6 @@
 # Service credentials
-postgres/.env
+**/.env
+!**/.env.example
 
 # Docker persistent data volumes
 **/data/
