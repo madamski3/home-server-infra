@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data:/var/lib/postgresql
+    ports:
+      - '${TAILSCALE_IP}:5432:5432'
+    networks:
+      - server-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '${TAILSCALE_IP}:5050:80'
+    networks:
+      - server-network
+
+networks:
+  server-network:
+    external: true
