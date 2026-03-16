@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '${TAILSCALE_IP}:8000:8000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/mike/dbt:/home/mike/dbt
+    networks:
+      - server-network
+
+networks:
+  server-network:
+    external: true
