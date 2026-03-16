@@ -15,3 +15,13 @@ def run_dbt():
 @router.post("/seed")
 def seed_dbt():
     return run_compose_service(DBT_COMPOSE_FILE, DBT_SERVICE, ["seed", "--full-refresh", "--profiles-dir", "."])
+
+
+@router.post("/build")
+def build_dbt():
+    return run_compose_service(DBT_COMPOSE_FILE, DBT_SERVICE, ["build", "--profiles-dir", "."])
+
+
+@router.post("/docs")
+def generate_docs():
+    return run_compose_service(DBT_COMPOSE_FILE, DBT_SERVICE, ["docs", "generate", "--profiles-dir", "."])
