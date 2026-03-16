@@ -28,6 +28,7 @@ All services are joined to a shared external Docker network called `server-netwo
 | postgres            | `/home/mike/infra/postgres/`      | 5432          | No apps connected yet. Data at `./data/`. |
 | pgadmin             | (in postgres compose)       | 5050          | Postgres web UI                |
 | uptime-kuma         | `/home/mike/uptime-kuma/`   | 3001          | Uptime monitoring              |
+| duckdb              | `/home/mike/infra/duckdb/`  | 9999          | Analytical warehouse. HTTP API + web UI via httpserver community extension. Pinned to duckdb==1.4.1 (latest version with httpserver support). No auth — secured by Tailscale binding. |
 
 ## Networking Notes
 - Accessed via Tailscale only — no public domain configured yet.
