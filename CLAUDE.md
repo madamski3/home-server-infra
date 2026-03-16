@@ -28,7 +28,8 @@ All services are joined to a shared external Docker network called `server-netwo
 | postgres            | `/home/mike/infra/postgres/`      | 5432          | No apps connected yet. Data at `./data/`. |
 | pgadmin             | (in postgres compose)       | 5050          | Postgres web UI                |
 | uptime-kuma         | `/home/mike/uptime-kuma/`   | 3001          | Uptime monitoring              |
-| duckdb              | `/home/mike/infra/duckdb/`  | 9999          | Analytical warehouse. HTTP API + web UI via httpserver community extension. Pinned to duckdb==1.4.1 (latest version with httpserver support). No auth — secured by Tailscale binding. |
+| clickhouse          | `/home/mike/infra/clickhouse/` | 8123 (HTTP), 9000 (native TCP) | Analytical warehouse for dbt workloads. Web UI at `http://100.94.165.38:8123/play`. |
+| api                 | `/home/mike/infra/api/`     | 8000          | Internal pipeline API. Triggers dbt runs and other automation. Docs at `/api/docs`. Secured by Tailscale binding. |
 
 ## Networking Notes
 - Accessed via Tailscale only — no public domain configured yet.
@@ -44,6 +45,21 @@ All services are joined to a shared external Docker network called `server-netwo
 - All new services must join `server-network` to participate in inter-service communication.
 - Admin/internal ports should be bound to `${TAILSCALE_IP}`, not `0.0.0.0`.
 - Postgres will be the standard database for new apps.
+
+## Manual Setup Steps (one-time, not in docker-compose)
+
+### ClickHouse — required after first `docker compose up`
+Run these commands once to create the virtual PostgreSQL source database and the seeds database:
+```bash
+docker exec -i clickhouse-clickhouse-1 clickhouse-client --password <CLICKHOUSE_PASSWORD> --query "
+CREATE DATABASE IF NOT EXISTS raw ENGINE = PostgreSQL('postgres-postgres-1:5432', 'youtube', 'fivetran', '<FIVETRAN_PASSWORD>', 'raw');
+CREATE DATABASE IF NOT EXISTS manual;
+"
+```
+- `raw` — virtual ClickHouse database backed by the `raw` schema in the `youtube` PostgreSQL database. Used by dbt as the source catalog.
+- `manual` — empty ClickHouse database for dbt seed tables.
+
+Both passwords are in their respective `.env` files (`infra/clickhouse/.env` and `infra/postgres/.env`).
 
 ## Near-Term Priorities
 1. Connect Postgres to the first app.

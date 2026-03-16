@@ -1,0 +1,17 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.2
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    volumes:
+      - ./data:/var/lib/clickhouse
+    ports:
+      - '${TAILSCALE_IP}:8123:8123'   # HTTP interface (web UI, Metabase/Superset)
+      - '${TAILSCALE_IP}:9000:9000'   # Native TCP (dbt, other clients)
+    networks:
+      - server-network
+
+networks:
+  server-network:
+    external: true
