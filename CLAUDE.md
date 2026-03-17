@@ -30,6 +30,7 @@ All services are joined to a shared external Docker network called `server-netwo
 | uptime-kuma         | `/home/mike/uptime-kuma/`   | 3001          | Uptime monitoring              |
 | clickhouse          | `/home/mike/infra/clickhouse/` | 8123 (HTTP), 9000 (native TCP) | Analytical warehouse for dbt workloads. Web UI at `http://100.94.165.38:8123/play`. |
 | api                 | `/home/mike/infra/api/`     | 8000          | Internal pipeline API. Triggers dbt runs and other automation. Docs at `/api/docs`. Secured by Tailscale binding. |
+| netdata             | `/home/mike/infra/netdata/` | 19999         | Host system metrics (CPU, memory, disk, network). UI at `http://100.94.165.38:19999`. |
 
 ## Networking Notes
 - Accessed via Tailscale only — no public domain configured yet.

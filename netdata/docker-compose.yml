@@ -1,0 +1,29 @@
+services:
+  netdata:
+    image: netdata/netdata:stable
+    restart: unless-stopped
+    pid: host
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - '${TAILSCALE_IP}:19999:19999'
+    volumes:
+      - ./data/config:/etc/netdata
+      - ./data/lib:/var/lib/netdata
+      - ./data/cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - server-network
+
+networks:
+  server-network:
+    external: true
